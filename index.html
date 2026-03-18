@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>MediChain AI – Your Private AI Health Companion</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    :root {
+      --primary: #10b981;
+      --primary-dark: #059669;
+      --dark: #0f172a;
+      --gray: #64748b;
+      --light: #f8fafc;
+    }
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+      color: #e2e8f0;
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+    .container {
+      width: 100%;
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    /* Navbar */
+    nav {
+      position: fixed;
+      top: 0;
+      width: 100%;
+      z-index: 1000;
+      background: rgba(15, 23, 42, 0.85);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+    }
+    .nav-inner {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      height: 80px;
+    }
+    .logo {
+      font-size: 1.75rem;
+      font-weight: 800;
+      color: var(--primary);
+      text-decoration: none;
+    }
+    .nav-links a {
+      color: #cbd5e1;
+      text-decoration: none;
+      margin-left: 2.5rem;
+      font-weight: 500;
+      transition: color 0.2s;
+    }
+    .nav-links a:hover {
+      color: var(--primary);
+    }
+
+    /* Hero */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      padding-top: 120px;
+      background: linear-gradient(to bottom, rgba(15,23,42,0.9), rgba(15,23,42,1));
+    }
+    .hero-content {
+      max-width: 720px;
+    }
+    .hero h1 {
+      font-size: clamp(3.2rem, 8vw, 5.5rem);
+      font-weight: 800;
+      line-height: 1.1;
+      margin-bottom: 1.5rem;
+      background: linear-gradient(90deg, #10b981, #34d399);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .hero p {
+      font-size: 1.35rem;
+      color: #cbd5e1;
+      margin-bottom: 2.5rem;
+      max-width: 600px;
+    }
+    .btn-primary {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      padding: 16px 32px;
+      font-size: 1.15rem;
+      font-weight: 600;
+      background: var(--primary);
+      color: white;
+      border: none;
+      border-radius: 9999px;
+      text-decoration: none;
+      transition: all 0.3s ease;
+      box-shadow: 0 10px 25px rgba(16,185,129,0.25);
+    }
+    .btn-primary:hover {
+      background: var(--primary-dark);
+      transform: translateY(-3px);
+      box-shadow: 0 20px 35px rgba(16,185,129,0.35);
+    }
+
+    /* Features */
+    .features {
+      padding: 8rem 0;
+      background: rgba(30,41,59,0.6);
+    }
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 2.5rem;
+    }
+    .feature-card {
+      background: rgba(30,41,59,0.7);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 16px;
+      padding: 2.5rem;
+      transition: all 0.3s ease;
+    }
+    .feature-card:hover {
+      transform: translateY(-12px);
+      border-color: var(--primary);
+      box-shadow: 0 20px 40px rgba(16,185,129,0.15);
+    }
+    .feature-icon {
+      font-size: 2.8rem;
+      color: var(--primary);
+      margin-bottom: 1.5rem;
+    }
+    .feature-card h3 {
+      font-size: 1.6rem;
+      margin-bottom: 1rem;
+    }
+
+    /* New Sections */
+    .section {
+      max-width: 1000px;
+      margin: 60px auto;
+      padding: 0 20px;
+    }
+    .section h2 {
+      font-size: 2.2rem;
+      color: var(--primary);
+      text-align: center;
+      margin-bottom: 2rem;
+      position: relative;
+    }
+    .section h2::after {
+      content: '';
+      width: 80px;
+      height: 4px;
+      background: var(--primary);
+      position: absolute;
+      bottom: -12px;
+      left: 50%;
+      transform: translateX(-50%);
+      border-radius: 2px;
+    }
+    .graphs-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 40px;
+      justify-content: center;
+    }
+    .graph-card {
+      background: rgba(30,41,59,0.7);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 16px;
+      padding: 24px;
+      flex: 1;
+      min-width: 340px;
+      max-width: 500px;
+      box-shadow: 0 8px 30px rgba(0,0,0,0.2);
+    }
+    .graph-card h3 {
+      font-size: 1.4rem;
+      color: #e2e8f0;
+      margin-bottom: 16px;
+      text-align: center;
+    }
+    .explanation {
+      background: rgba(30,41,59,0.7);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 16px;
+      padding: 40px 32px;
+      box-shadow: 0 8px 30px rgba(0,0,0,0.2);
+    }
+    .explanation ul {
+      list-style: none;
+      margin-top: 2rem;
+    }
+    .explanation li {
+      margin-bottom: 1.8rem;
+      font-size: 1.08rem;
+      display: flex;
+      align-items: flex-start;
+      gap: 16px;
+      color: #cbd5e1;
+    }
+    .explanation li i {
+      font-size: 2rem;
+      color: var(--primary);
+      margin-top: 4px;
+    }
+
+    /* Footer */
+    footer {
+      padding: 5rem 0 3rem;
+      text-align: center;
+      border-top: 1px solid rgba(255,255,255,0.08);
+      color: #94a3b8;
+      font-size: 1rem;
+    }
+    footer a {
+      color: var(--primary);
+      text-decoration: none;
+    }
+    footer a:hover {
+      text-decoration: underline;
+    }
+
+    /* Sticky Button */
+    .grok-sticky {
+      position: fixed;
+      bottom: 32px;
+      right: 32px;
+      width: 72px;
+      height: 72px;
+      background: linear-gradient(135deg, #10b981, #34d399);
+      border-radius: 50%;
+      box-shadow: 0 12px 32px rgba(16,185,129,0.4);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 2.2rem;
+      cursor: pointer;
+      z-index: 9999;
+      transition: all 0.3s ease;
+      border: 3px solid rgba(255,255,255,0.25);
+    }
+    .grok-sticky:hover {
+      transform: scale(1.15) translateY(-6px);
+      box-shadow: 0 20px 50px rgba(16,185,129,0.6);
+    }
+    .grok-sticky i {
+      transition: transform 0.4s ease;
+    }
+    .grok-sticky:hover i {
+      transform: rotate(360deg);
+    }
+
+    @media (max-width: 768px) {
+      .hero h1 { font-size: clamp(2.8rem, 12vw, 4.2rem); }
+      .grok-sticky {
+        bottom: 24px;
+        right: 24px;
+        width: 64px;
+        height: 64px;
+        font-size: 1.9rem;
+      }
+      .graphs-container {
+        flex-direction: column;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Navbar -->
+  <nav>
+    <div class="container nav-inner">
+      <a href="#" class="logo">MediChain AI</a>
+      <div class="nav-links">
+        <a href="#features">Why Us?</a>
+        <a href="#how">How It Works</a>
+        <a href="#contact">Contact</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero -->
+  <section class="hero">
+    <div class="container">
+      <div class="hero-content">
+        <h1>Your Private AI Health Companion</h1>
+        <p>
+          Securely store all your health records on blockchain.<br>
+          Share with any doctor anytime — full control in your hands.
+        </p>
+        <a href="chatbot.html" class="btn-primary">
+          <i class="fas fa-robot"></i> Start Chatting Now
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Features -->
+  <section class="features" id="features">
+    <div class="container">
+      <div class="features-grid">
+        <div class="feature-card">
+          <div class="feature-icon"><i class="fas fa-lock"></i></div>
+          <h3>100% Privacy</h3>
+          <p>Your data is never stored on our servers. Everything stays encrypted in your wallet.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon"><i class="fas fa-share-alt"></i></div>
+          <h3>Share with Doctors</h3>
+          <p>Only the doctors you grant permission to can view your records.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon"><i class="fas fa-brain"></i></div>
+          <h3>AI Assistance</h3>
+          <p>Personalized advice, trend analysis, medication reminders — all in your pocket.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Graphs Section -->
+  <section class="section">
+    <h2>Your Health in Graphs</h2>
+    <div class="graphs-container">
+      <div class="graph-card">
+        <h3>Diabetes Timeline Graph</h3>
+        <canvas id="recordChart"></canvas>
+      </div>
+      <div class="graph-card">
+        <h3>Records by Disease</h3>
+        <canvas id="pieChart"></canvas>
+      </div>
+    </div>
+  </section>
+
+  <!-- AI How It Works Section -->
+  <section class="section">
+    <h2>How Does AI Give You Advice?</h2>
+    <div class="explanation">
+      <p style="font-size: 1.15rem; text-align: center; color: var(--gray); margin-bottom: 2.5rem;">
+        We don't just chat — we analyze your data using mathematics, statistics, and data science.
+      </p>
+      <ul>
+        <li>
+          <i class="fas fa-brain"></i>
+          <div>
+            <strong>Mathematics & Statistics</strong><br>
+            We analyze trends, averages, standard deviation, and percentiles to understand your health direction.
+          </div>
+        </li>
+        <li>
+          <i class="fas fa-chart-line"></i>
+          <div>
+            <strong>Time-Series Analysis</strong><br>
+            Graphs show when your readings are rising or falling, making doctor discussions easier.
+          </div>
+        </li>
+        <li>
+          <i class="fas fa-database"></i>
+          <div>
+            <strong>Blockchain Storage</strong><br>
+            Every record is securely stored on Arc Testnet. No one can change it without your permission.
+          </div>
+        </li>
+        <li>
+          <i class="fas fa-shield-alt"></i>
+          <div>
+            <strong>Full Control in Your Hands</strong><br>
+            Your data is never saved on our servers — everything stays encrypted in your wallet.
+          </div>
+        </li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <div class="container">
+      <p>&copy; 2026 MediChain AI. All rights reserved.</p>
+      <p>
+        Built with ❤️ for privacy-first healthcare.<br>
+        <a href="https://github.com/yourusername/medichain-ai" target="_blank">GitHub</a> | 
+        <a href="#">Privacy Policy</a> | 
+        <a href="#">Terms</a>
+      </p>
+    </div>
+  </footer>
+
+  <!-- Sticky Grok-style Button -->
+  <a href="chatbot.html" class="grok-sticky" title="Talk to AI Doctor">
+    <i class="fas fa-robot"></i>
+  </a>
+
+  <script>
+    // Charts
+    document.addEventListener("DOMContentLoaded", function () {
+      // Line Chart
+      const lineCtx = document.getElementById('recordChart');
+      if (lineCtx) {
+        new Chart(lineCtx.getContext('2d'), {
+          type: 'line',
+          data: {
+            labels: ['Jan 1, 2025', 'Jan 15', 'Feb 1', 'Feb 15', 'Mar 1'],
+            datasets: [{
+              label: 'Diabetes Reading',
+              data: [180, 160, 120, 90, 140],
+              borderColor: '#e74c3c',
+              backgroundColor: 'rgba(231, 76, 60, 0.2)',
+              fill: true,
+              tension: 0.4
+            }]
+          },
+          options: {
+            responsive: true,
+            scales: { y: { beginAtZero: true } }
+          }
+        });
+      }
+
+      // Pie Chart
+      const pieCtx = document.getElementById('pieChart');
+      if (pieCtx) {
+        new Chart(pieCtx.getContext('2d'), {
+          type: 'pie',
+          data: {
+            labels: ['Diabetes', 'Hypertension', 'Thyroid', 'Others'],
+            datasets: [{
+              data: [45, 25, 15, 15],
+              backgroundColor: ['#ff6384', '#36a2eb', '#ffce56', '#4bc0c0']
+            }]
+          },
+          options: { responsive: true }
+        });
+      }
+    });
+  </script>
+</body>
+</html>
